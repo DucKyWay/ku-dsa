@@ -1,2 +1,2 @@
 # ku-dsa
-Repository for 01418233 Data Structure and Algorithms
+Repository for 01418231 Data Structure and Algorithms
