@@ -51,7 +51,7 @@ int main() {
 
         if (is_prime[pages]) {
             int order = checkPrimeOrder(is_prime, pages);
-            cout << checkPrimeOrder(is_prime, pages) << printSuffix(order) << endl;
+            cout << order << printSuffix(order) << endl;
         } else {
             cout << "Unrelated" << endl;
         }
