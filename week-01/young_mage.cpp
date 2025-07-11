@@ -4,49 +4,80 @@
 
 using namespace std;
 
-vector<string> split(const string& str) {
+vector<string> split(const string& str, char space = ' ') {
     vector<string> res;
-    istringstream iss(str);
-    string word;
-    while (iss >> word) {
-        res.push_back(word);
+    string temp;
+    for (char ch : str) {
+        if (ch == space && !temp.empty()) {
+            res.push_back(temp);
+            temp.clear();
+        } else {
+            temp += ch;
+        }
+    }
+    if (!temp.empty()) {
+        res.push_back(temp);
     }
     return res;
 }
-
-double percentage(int level) {
+float percentage(int level) {
     switch (level) {
-        case 1:     return 0.1;
-        case 2:     return 0.2;
-        case 3:     return 0.3;
-        case 4:     return 0.4;
-        case 5:     return 0.5;
-        case 6:     return 0.65;
-        case 7:     return 0.8;
-        case 8:     return 1.0;
-        default:    return 0;
+        case 1:     return 0.1f;
+        case 2:     return 0.2f;
+        case 3:     return 0.3f;
+        case 4:     return 0.4f;
+        case 5:     return 0.5f;
+        case 6:     return 0.65f;
+        case 7:     return 0.8f;
+        case 8:     return 1.0f;
+        default:    return 0.0f;
+    }
+}
+
+float maxScore = 0.0f;
+void recursive(int depth, int manaUsed, float scoreSum, int a, int b,
+         const vector<int>& mana, const vector<float>& score) {
+    
+    if (depth == a || manaUsed > b) return;
+
+    // bruteforce every skill
+    for (int i = 0; i < (int)mana.size(); i++) {
+        int newMana = manaUsed + mana[i];
+        if (newMana > b) continue;
+        
+        float newScore = scoreSum + score[i];
+
+        if (newScore > maxScore) {
+            maxScore = newScore;
+        }
+
+        // recursion
+        recursive(depth + 1, newMana, newScore, a, b, mana, score);
     }
 }
 
 int main() {
-    int a, b;
+    int a, b, n;
     cin >> a >> b;
     
-    int n;    
     cin >> n;
     cin.ignore();
 
     vector<int> mana(n);
-    vector<double> score(n);
+    vector<float> score(n);
 
     for (int i = 0; i < n; i++) {
         string line;
         getline(cin, line);
+        if (line.empty()) {
+            i--;
+            continue;
+        }
         vector<string> temp = split(line);
 
         string type = temp[0];
         int level = stoi(temp[1]);
-        int manaCost = stoi(temp.back());
+        int manaCost = stoi(temp.back()); // last
 
         int base = 0;
         if (type == "F" || type == "W")         base = 12; // Fire Wind
@@ -58,28 +89,7 @@ int main() {
         score[i] = base * percentage(level);
     }
 
-    for(int i = 0; i < n; i++) {
-        cout << "score: " << score[i] << " mana: " << mana[i] << endl;
-    }
-
-    // เลือก max i คาถา j mana
-    vector<vector<double>> dp(a + 1, vector<double>(b + 1, 0));
-    for (int i = 0; i < n; i++) {
-        for (int j = a; j >= 1; j--) { // สกิล
-            for (int k = b; k >= mana[i]; k--) { // มานา
-                dp[j][k] = max(dp[j][k], dp[j - 1][k - mana[i]] + score[i]);
-            }
-        }
-    }
-
-    // max score บน dyn prog
-    double maxScore = 0;
-    for (int j = 0; j <= b; j++) {
-        if (dp[a][j] > maxScore) {
-            maxScore = dp[a][j];
-        }
-    }
-
+    recursive(0, 0, 0.0f, a, b, mana, score);
     cout << (int)maxScore << endl;
 
     return 0;
