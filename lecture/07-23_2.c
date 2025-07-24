@@ -16,26 +16,42 @@ typedef struct node {
 typedef struct linked_list {
     int length;
     Node *head;
+    Node *last;
 } NumList;
 
-Node *newNode() {
-    Node *p;
-    p = (Node *)malloc(sizeof(Node));
+Node *newNode(int value) {
+    Node *p = (Node *)malloc(sizeof(Node));
+    p->num = value;
     p->next = NULL;
     return p;
 }
 
 void initList(NumList *n) {
     n->head = NULL;
+    n->last = NULL;
+    n->length = 0;
 }
 
-int appendHeadList(NumList *s, Node *p) {
+void appendHeadList(NumList *s, Node *p) {
     if(s->head == NULL) {
         s->head = p;
+        s->last = p;
     } else {
         p->next = s->head;
         s->head = p;
     }
+    s->length++;
+}
+
+void InsertLast(NumList *s, Node *p) {
+    if(s->head == NULL) {
+        s->head = p;
+        s->last = p;
+    } else {
+        s->last->next = p;
+        s->last = p;
+    }
+    s->length++;
 }
 
 void printNumList(NumList L) {
@@ -47,14 +63,19 @@ void printNumList(NumList L) {
     }
 }
 
-void main() {
+int main() {
     NumList NL;
     Node *N;
     initList(&NL);
     for(int i = 0; i < 3; ++i) {
-        N = newNode;
+        N = newNode(i);
         N->num = i;
         appendHeadList(&NL, N);
+    }
+
+    for(int i = 10; i < 12; ++i) {
+        N = newNode(i);
+        InsertLast(&NL, N);
     }
 
     printNumList(NL);

@@ -91,6 +91,7 @@ int main() {
         int luna_cooldown = (i == luna.p_index) ? luna.cooldown : -1;
 
         miena_list.push_back({&miena_dummy[i], miena_dummy[i].hp, 0, miena_cooldown, miena_dummy[i].atk, miena_dummy[i].def});
+
         luna_list.push_back({&luna_dummy[i], luna_dummy[i].hp, 0, luna_cooldown, luna_dummy[i].atk, luna_dummy[i].def});
     }
 
