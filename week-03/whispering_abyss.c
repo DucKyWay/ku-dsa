@@ -26,72 +26,44 @@ Node* createCircle(int n) {
     return head;
 }
 
-// void solve(int n, int x) {
-//     Node *head = createCircle(n);
-//     Node *prev = NULL;
-//     Node *curr = head;
+int main() {
+    int n, x;
+    if (scanf("%d %d", &n, &x) != 2) return 0;
 
-//     while(n > 0) {
-//         for(int i = 0; i < x - 1; i++) {
-//             prev = curr;
-//             curr = curr->next;
-//         }
-//         printf("%d", curr->data);
-//         if(n != 1) printf(" ");
+    Node *head = createCircle(n);
 
-//         prev->next = curr->next;
+    // prev เริ่มที่ tail
+    Node *prev = head;
+    while (prev->next != head) {
+        prev = prev->next;
+    }
+    Node *curr = head;
 
-//         if(curr == head) head = curr->next;
+    while (n > 0) {
+        // mod โคตรเร็วหวะ
+        int step = x % n;
+        if (step == 0) step = n;
 
-//         Node *temp = curr;
-//         curr = curr->next;
-//         free(temp);
-
-//         n--;
-//     }
-//     printf("\n");
-// }
-
-void solve(int n, int x) {
-    Node* head = createCircle(n);
-    Node* prev = NULL;
-    Node* curr = head;
-
-    while(n > 0) {
-        for(int i = 1; i < x; i++) {
+        // step-1
+        for (int i = 1; i < step; i++) {
             prev = curr;
             curr = curr->next;
         }
 
         printf("%d", curr->data);
-        if(n != 1) printf(" ");
+        if (n > 1) printf(" ");
 
         // ลบ curr
-        if(curr == prev) {
-            free(curr);
-            break;
-        }
-
         prev->next = curr->next;
-
-        if(curr == head) {
+        if (curr == head) {
             head = curr->next;
         }
-
-        Node* temp = curr;
+        Node *tmp = curr;
         curr = curr->next;
-        free(temp);
+        free(tmp);
         n--;
     }
 
     printf("\n");
-}
-
-int main() {
-    int n, x;
-    scanf("%d", &n);
-    scanf("%d", &x);
-    solve(n, x);
-
     return 0;
 }
