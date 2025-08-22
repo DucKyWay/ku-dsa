@@ -2,7 +2,6 @@
 #include <stack>
 #include <string>
 #include <cctype>
-#include <iomanip>
 #include <cmath>
 #include <cstdio>
 using namespace std;
@@ -20,7 +19,7 @@ bool doOperator(stack<double> &val, stack<char> &op) {
     if (op.empty() || val.size() < 2)
         return false;
 
-    double b = val.top();
+    double b = val.top(); 
     val.pop();
 
     double a = val.top();
@@ -40,25 +39,26 @@ bool doOperator(stack<double> &val, stack<char> &op) {
             return false;
         val.push(a / b);
     }
-    else
+    else {
         return false;
+    }
     return true;
 }
 
 int main() {
 
-    string s;
-    if (!getline(cin, s))
+    string str;
+    if (!getline(cin, str))
         return 0;
 
     stack<double> vals;
     stack<char> ops;
     bool expectValue = true; // true => num, "(" , +/- before num
 
-    for (size_t i = 0; i < s.size();) {
-        char c = s[i];
+    for (size_t i = 0; i < str.size();) {
+        char c = str[i];
 
-        if (isspace((char)c)) {
+        if (c == ' ') {
             ++i;
             continue;
         }
@@ -71,15 +71,15 @@ int main() {
 
         // num
         if (isdigit((char)c) || c == '.' ||
-            ((c == '+' || c == '-') && expectValue && i + 1 < s.size() &&
-             (isdigit((char)s[i + 1]) || s[i + 1] == '.'))) {
+            ((c == '+' || c == '-') && expectValue && i + 1 < str.size() &&
+             (isdigit((char)str[i + 1]) || str[i + 1] == '.'))) {
 
             size_t j = i;
-            if ((s[j] == '+' || s[j] == '-') && expectValue)
+            if ((str[j] == '+' || str[j] == '-') && expectValue)
                 j++; // op before num
             bool seenDigit = false, seenDot = false;
-            while (j < s.size()) {
-                char d = s[j];
+            while (j < str.size()) {
+                char d = str[j];
                 if (isdigit((char)d)) {
                     seenDigit = true;
                     j++;
@@ -98,7 +98,7 @@ int main() {
                 return 0;
             }
             try {
-                double v = stod(s.substr(i, j - i));
+                double v = stod(str.substr(i, j - i));
                 vals.push(v);
             } catch (...) {
                 cout << "ERROR : Invalid expression" << endl;
@@ -124,12 +124,12 @@ int main() {
                     break;
                 }
                 if (!doOperator(vals, ops)) {
-                    cout << "ERROR : Invalid expression\n";
+                    cout << "ERROR : Invalid expression" << endl;
                     return 0;
                 }
             }
             if (!matched) {
-                cout << "ERROR : Unbalanced parenthesis\n";
+                cout << "ERROR : Unbalanced parenthesis" << endl;
                 return 0;
             }
             ++i;
@@ -140,13 +140,13 @@ int main() {
         // op
         if (isOperator(c)) {
             if (expectValue) {
-                cout << "ERROR : Invalid expression\n";
+                cout << "ERROR : Invalid expression" << endl;
                 return 0;
             }
             while (!ops.empty() && isOperator(ops.top()) && 
                     precedence(ops.top()) >= precedence(c)) {
                 if (!doOperator(vals, ops)) {
-                    cout << "ERROR : Invalid expression\n";
+                    cout << "ERROR : Invalid expression" << endl;
                     return 0;
                 }
             }
@@ -161,21 +161,20 @@ int main() {
     while (!ops.empty()) {
         
         if (ops.top() == '(') {
-            cout << "ERROR : Unbalanced parenthesis\n";
+            cout << "ERROR : Unbalanced parenthesis" << endl;
             return 0;
         }
         if (!doOperator(vals, ops)) {
-            cout << "ERROR : Invalid expression\n";
+            cout << "ERROR : Invalid expression" << endl;
             return 0;
         }
     }
 
     if (vals.size() != 1) {
-        cout << "ERROR : Invalid expression\n";
+        cout << "ERROR : Invalid expression" << endl;
         return 0;
     }
 
-    cout << setprecision(2);
     printf("Final Result : %.2f\n", vals.top());
     return 0;
 }
