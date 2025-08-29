@@ -1,43 +1,45 @@
 #include <iostream>
-#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <string>
+
 using namespace std;
 
-const int TABLE_SIZE = 20;
+unordered_set<string> dict;
+unordered_map<int, bool> map;
+int max_len;
 
-typedef struct tools {
-    string name;
-    double x, y, z;
-} Tools;
+string target;
 
+bool recursive(int in) {
+    if (in == (int)target.size()) return true;
+    if (map.count(in)) return map[in];
+
+    for (int i = 1; i <= max_len ; i++) {
+        string s = target.substr(in, i);
+        if (dict.find(s) != dict.end()) {
+            if (recursive(in + i)) {
+                return map[in] = true;
+            }
+        }
+    }
+    return map[in] = false;
+}
 
 int main() {
 
-    vector<Tools> tool_list;
-    Tools tool;
+    int n; 
+    cin >> n;
+    max_len = 0;
+    dict.reserve(n*2);
 
-    while(true) {
-        cin >> tool.name;
-        if(tool.name == "--------------------") {
-            break;
-        }
-        cin >> tool.x >> tool.y >> tool.z;
-        tool_list.push_back(tool);  
-    };
-
-    char search[TABLE_SIZE];
-    while(cin >> search) {
-        bool find = false;
-        for(int i = 0; i < tool_list.size(); i++) {
-            if(tool_list[i].name == search) {
-                find = true;
-                cout << "( " << tool_list[i].x << tool_list[i].y << tool_list[i].z << " )" << endl;
-                break;
-            }
-        }
-        if(find == false) {
-            cout << "Item not found." << endl;
-        }
+    for (int i = 0; i < n; i++) {
+        cin >> target;
+        dict.insert(target);
+        max_len = max(max_len, (int)target.size());
     }
-    
+    cin >> target;
+
+    cout << (recursive(0) ? "POSSIBLE" : "IMPOSSIBLE");
     return 0;
 }
