@@ -18,10 +18,14 @@ void preorder(Node *node) {
     if(node->rightSibling != nullptr) {
         preorder(node->rightSibling);
     }
+    
 }
 
 void postorder(Node *node) {
-    
+    if(node == nullptr) return;
+    postorder(node->leftChild);
+    postorder(node->rightSibling);
+    cout << node->data << " ";
 }
 
 void createRoot(int n, Node *node) {
