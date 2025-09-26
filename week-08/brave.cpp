@@ -41,7 +41,6 @@ void printTree(Node* root, int depth = 0) {
     if (depth > 0) cout << "|_";
     cout << root->data << endl;
 
-    sortChild(root->children);
     for (auto child : root->children) {
         printTree(child, depth + 1);
     }
@@ -88,35 +87,45 @@ int main() {
             }
 
             if (newParentName == "NULL") {
-		// child -> root 	
-		if(root != nullptr && root != node) {
-			node->children.push_back(root);
-			root->parent = node;
-		}
+		        // child -> root 	
+		        if(root != nullptr && root != node) {
+			        node->children.push_back(root);
+			        root->parent = node;
+		    }
                 node->parent = nullptr;
                 root = node;
             } else {
-		// child -> new root
+		        // child -> new root
                 Node* newParent = nodes[newParentName];
                 node->parent = newParent;
                 newParent->children.push_back(node);
+                sortChild(newParent->children);
             }
         }
         else if (cmd == "R") { // remove
             string nodeName;
             cin >> nodeName;
+
+            if (nodes.find(nodeName) == nodes.end()) {
+                continue;
+            }
+
             Node* node = nodes[nodeName];
             if (node->parent != nullptr) {
                 removeChild(node->parent, node);
+                if (root == node) {
+                    root = nullptr;
+                }
             } else {
                 root = nullptr;
             }
             deleteSubtree(node, nodes);
         }
         else { // new
-		string child, parent;
-		child = cmd;
+	    	string child, parent;
+		    child = cmd;
             cin >> parent;
+
             if (nodes.find(child) == nodes.end())
                 nodes[child] = new Node(child);
             if (parent != "NULL" && nodes.find(parent) == nodes.end())
@@ -127,6 +136,7 @@ int main() {
             } else {
                 nodes[child]->parent = nodes[parent];
                 nodes[parent]->children.push_back(nodes[child]);
+                sortChild(nodes[parent]->children);
             }
         }
     }
